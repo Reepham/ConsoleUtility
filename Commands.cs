@@ -102,7 +102,10 @@ namespace ConsoleUtility
 
         private void Break()
         {
-            tokensrc.Cancel();
+            if (tokensrc != null)
+            {
+                tokensrc.Cancel();
+            }
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -63,14 +64,14 @@ namespace ConsoleUtility
 
         private void Help()
         {
-            Console.WriteLine(
+            WriteColor(
                  "\n------------------------" +
-                 "\n Commands:" +
-                 "\n help - show a list of commands" +
-                 "\n exit - close the console" +
-                 "\n repeat - repeat the Test" +
-                 "\n break - stop the Test during Execution (only for Tests with CancellationToken)" +
-                 "\n------------------------");
+                 "\n [Commands:]" +
+                 "\n [help] - show a list of commands" +
+                 "\n [exit] - close the console" +
+                 "\n [repeat] - repeat the Test" +
+                 "\n [break] - stop the Test during Execution (only for Tests with CancellationToken)" +
+                 "\n------------------------",ConsoleColor.Yellow);
         }
 
         private async void Repeat()
@@ -95,8 +96,6 @@ namespace ConsoleUtility
                 }
             , token);
             await t;
-            // funzt, allerdings MemoryOverflow wenn man es zu oft wiederholt...
-            CallCommands();
 
         }
 
@@ -106,6 +105,30 @@ namespace ConsoleUtility
             {
                 tokensrc.Cancel();
             }
+        }
+
+
+
+
+        static void WriteColor(string message, ConsoleColor color)
+        {
+            var pieces = Regex.Split(message, @"(\[[^\]]*\])");
+
+            for (int i = 0; i < pieces.Length; i++)
+            {
+                string piece = pieces[i];
+
+                if (piece.StartsWith("[") && piece.EndsWith("]"))
+                {
+                    Console.ForegroundColor = color;
+                    piece = piece.Substring(1, piece.Length - 2);
+                }
+
+                Console.Write(piece);
+                Console.ResetColor();
+            }
+
+            Console.WriteLine();
         }
 
     }
